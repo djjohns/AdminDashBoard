@@ -1,0 +1,38 @@
+version: '3'
+services:
+  app:
+    # Build from dockerfile in ./api
+    build:
+      context: ./api
+      dockerfile: dockerfile
+    # Specify a container name.
+    container_name: admin_dashboard_api
+    # Command to start the server.
+    command: uvicorn app.main:app --host 0.0.0.0 --port 3001 --reload --reload-include *
+    # Map your ports extrnalPort:internalPort
+    ports:
+      - 3001:3001
+    # Map current dir:internal working dir.
+    volumes:
+      - .:/admin_dashboard_api
+    depends_on:
+      - mongodb
+    environment:
+      MONGO_URI: mongodb://mongodb:27017/admin_dashboard
+
+  frontend:
+    # Build from dockerfile in ./frontend
+    build:
+      context: ./frontend
+      dockerfile: dockerfile
+    # Specify a container name.
+    container_name: admin_dashboard_frontend
+    #  Maps port 80 from the frontend container to port 80 on the host.
+    ports:
+      - 80:80
+
+  mongodb:
+    image: mongo:latest
+    container_name: admin_dashboard_mongodb
+    ports:
+      - 27017:27017
