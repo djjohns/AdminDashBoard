@@ -1,13 +1,13 @@
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from app.invoices import (
+from app.invoices.database import (
     fetch_one_invoice,
     fetch_all_invoices,
     create_invoice,
     update_invoice,
     remove_invoice,
 )
-from app.invoices import Invoice
+from app.invoices.model import Invoice
 
 
 

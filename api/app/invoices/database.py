@@ -1,5 +1,5 @@
 import motor.motor_asyncio
-from model import Invoice
+from app.invoices.model import Invoice
 
 
 
