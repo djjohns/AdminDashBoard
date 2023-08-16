@@ -13,7 +13,7 @@ from app.invoices.model import Invoice
 
 app = FastAPI()
 
-origins = ['http://localhost:80']
+origins = ['*']
 
 app.add_middleware(
     CORSMiddleware,

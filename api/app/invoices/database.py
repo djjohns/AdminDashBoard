@@ -3,8 +3,8 @@ from app.invoices.model import Invoice
 
 
 
-client = motor.motor_asyncio.AsyncIOMotorClient('mongodb://localhost:27017/')
-database = client.AdminDashboard
+client = motor.motor_asyncio.AsyncIOMotorClient('mongodb://mongodb:27017/')
+database = client.admin_dashboard
 collection = database.invoice
 
 async def fetch_one_invoice(invoice_id):
