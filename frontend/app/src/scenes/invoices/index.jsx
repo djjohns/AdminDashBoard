@@ -4,6 +4,8 @@ import { tokens } from "../../theme";
 import { mockDataInvoices } from "../../data/mockData";
 import Header from "../../components/Header";
 import NewDataGridModal from "../../components/NewDatagridModal"
+import NewInvoiceForm from "./NewInvoiceForm";
+import AddInvoice from "./AddInvoice";
 
 const Invoices = () => {
   const theme = useTheme();
@@ -79,7 +81,7 @@ const Invoices = () => {
           },
         }}
       >
-        <NewDataGridModal />
+        <AddInvoice />
         <DataGrid
           checkboxSelection
           rows={mockDataInvoices}
