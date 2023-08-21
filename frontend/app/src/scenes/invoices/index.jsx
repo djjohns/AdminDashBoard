@@ -1,10 +1,9 @@
+import React, { useState, useEffect } from "react";
+import axios from "axios";
 import { Box, Typography, useTheme } from "@mui/material";
 import { DataGrid, GridToolbar } from "@mui/x-data-grid";
 import { tokens } from "../../theme";
-import { mockDataInvoices } from "../../data/mockData";
 import Header from "../../components/Header";
-import NewDataGridModal from "../../components/NewDatagridModal"
-import NewInvoiceForm from "./NewInvoiceForm";
 import AddInvoice from "./AddInvoice";
 
 const Invoices = () => {
@@ -39,11 +38,35 @@ const Invoices = () => {
       ),
     },
     {
-      field: "date",
+      field: "selectedDate",
       headerName: "Date",
       flex: 1,
     },
   ];
+
+  const [invoices, setInvoices] = useState([]);
+
+  const fetchInvoices = () => {
+    axios.get("http://localhost:3001/api/invoice")
+      .then(response => {
+        // Transform the response data to include the required 'id' property
+        const transformedInvoices = response.data.map(invoice => ({
+          id: invoice.invoice_id, // Use 'invoice_id' as the 'id' property
+          ...invoice,
+        }));
+        setInvoices(transformedInvoices);
+      })
+      .catch(error => {
+        console.error("Error fetching invoices:", error);
+      });
+  };
+
+  useEffect(() => {fetchInvoices();}, []);
+
+  
+  const refreshInvoices = () => {
+    fetchInvoices();
+  };
 
   return (
     <Box m="20px">
@@ -81,10 +104,10 @@ const Invoices = () => {
           },
         }}
       >
-        <AddInvoice />
+        <AddInvoice refreshInvoices={refreshInvoices} />
         <DataGrid
           checkboxSelection
-          rows={mockDataInvoices}
+          rows={invoices}
           columns={columns}
           slots={{ toolbar: GridToolbar }}
         />

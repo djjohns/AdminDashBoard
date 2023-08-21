@@ -10,7 +10,7 @@ import {
 } from '@mui/material';
 import BasicDatePicker from '../../components/BasicDatePicker';
 
-const NewInvoiceForm = ({ open, onClose }) => {
+const NewInvoiceForm = ({ open, onClose, refreshInvoices }) => {
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
   const [email, setEmail] = useState('');
@@ -49,7 +49,10 @@ const NewInvoiceForm = ({ open, onClose }) => {
         }
       })
       .then((response) => response.data)
-      .then(console.log('Form submitted:', invoice_id, name, phone, email, cost, formattedDate))
+      .then(() => {
+        console.log('Form submitted:', invoice_id, name, phone, email, cost, formattedDate);
+        refreshInvoices();
+      })
       .catch((error) => console.error('Error adding invoice:', error));
 
     // Close the modal
