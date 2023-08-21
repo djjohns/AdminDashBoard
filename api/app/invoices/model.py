@@ -9,7 +9,7 @@ class Invoice(BaseModel):
     phone:str
     email: str
     cost: str
-    date: str
+    selectedDate: str
 
     class Config:
         populate_by_name = True
@@ -20,6 +20,6 @@ class Invoice(BaseModel):
                 "phone":"(777)867-5309",
                 "email": "john.doe@gmail.com",
                 "cost": "21.24",
-                "date": "03/12/2023",
+                "selectedDate": "03/12/2023",
             }
         }

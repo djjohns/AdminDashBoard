@@ -10,7 +10,6 @@ import {
 } from '@mui/material';
 import BasicDatePicker from '../../components/BasicDatePicker';
 
-
 const NewInvoiceForm = ({ open, onClose }) => {
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
@@ -24,23 +23,34 @@ const NewInvoiceForm = ({ open, onClose }) => {
   const handleCostChange = (e) => setCost(e.target.value);
   const handleDateChange = (date) => setSelectedDate(date);
 
+  // Function to normalize date to mm/dd/yyyy format
+  const normalizeDate = (date) => {
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    const day = date.getDate().toString().padStart(2, '0');
+    const year = date.getFullYear();
+    return `${month}/${day}/${year}`;
+  };
+
   const handleSubmit = () => {
-    axios.post("http://localhost:3001/api/invoice", {
-      invoice_id: crypto.randomUUID(),
-      name,
-      phone,
-      email,
-      cost,
-      selectedDate
-    }, {
-      headers: {
-        "Content-Type": "application/json",
-      }
-    })
-    .then((response) => response.data)
-    .then(console.log('Form submitted:', name, phone, email, cost, selectedDate))
-    .catch((error) => console.error("Error adding invoice:", error));
-    
+    const formattedDate = normalizeDate(selectedDate);
+    const invoice_id = crypto.randomUUID()
+
+    axios
+      .post('http://localhost:3001/api/invoice', {
+        invoice_id,
+        name,
+        phone,
+        email,
+        cost,
+        selectedDate: formattedDate, // Use the formatted date
+      }, {
+        headers: {
+          "Content-Type": "application/json",
+        }
+      })
+      .then((response) => response.data)
+      .then(console.log('Form submitted:', invoice_id, name, phone, email, cost, formattedDate))
+      .catch((error) => console.error('Error adding invoice:', error));
 
     // Close the modal
     onClose();

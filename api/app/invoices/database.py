@@ -3,7 +3,7 @@ from app.invoices.model import Invoice
 
 
 
-client = motor.motor_asyncio.AsyncIOMotorClient('mongodb://mongodb:27017/')
+client = motor.motor_asyncio.AsyncIOMotorClient('mongodb://mongodb:27017')
 database = client.admin_dashboard
 collection = database.invoice
 
@@ -30,7 +30,7 @@ async def update_invoice(
         phone,
         email,
         cost,
-        date
+        selectedDate
     ):
     await collection.update_one(
         {"invoice_id": invoice_id},
@@ -39,7 +39,7 @@ async def update_invoice(
             "phone": phone,
             "email": email,
             "cost": cost,
-            "date": date
+            "selectedDate": selectedDate
         }}
     )
     document = await collection.find_one({"invoice_id": invoice_id})
