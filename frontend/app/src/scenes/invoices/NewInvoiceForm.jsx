@@ -8,6 +8,8 @@ import {
   TextField,
   Button,
 } from '@mui/material';
+import Snackbar from '@mui/material/Snackbar';
+import MuiAlert from '@mui/material/Alert';
 import BasicDatePicker from '../../components/BasicDatePicker';
 
 const NewInvoiceForm = ({ open, onClose, refreshInvoices }) => {
@@ -16,12 +18,26 @@ const NewInvoiceForm = ({ open, onClose, refreshInvoices }) => {
   const [email, setEmail] = useState('');
   const [cost, setCost] = useState('');
   const [selectedDate, setSelectedDate] = useState(new Date());
+  // Snackbar state
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarSeverity, setSnackbarSeverity] = useState('success'); // or 'error' for failure
+  const [snackbarMessage, setSnackbarMessage] = useState('');
 
   const handleNameChange = (e) => setName(e.target.value);
   const handlePhoneChange = (e) => setPhone(e.target.value);
   const handleEmailChange = (e) => setEmail(e.target.value);
   const handleCostChange = (e) => setCost(e.target.value);
   const handleDateChange = (date) => setSelectedDate(date);
+
+  const openSnackbar = (severity, message) => {
+    setSnackbarSeverity(severity);
+    setSnackbarMessage(message);
+    setSnackbarOpen(true);
+  };
+
+  const closeSnackbar = () => {
+    setSnackbarOpen(false);
+  };
 
   // Function to normalize date to mm/dd/yyyy format
   const normalizeDate = (date) => {
@@ -31,33 +47,37 @@ const NewInvoiceForm = ({ open, onClose, refreshInvoices }) => {
     return `${month}/${day}/${year}`;
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     const formattedDate = normalizeDate(selectedDate);
-    const invoice_id = crypto.randomUUID()
-
-    axios
-      .post('http://localhost:3001/api/invoice', {
+    const invoice_id = crypto.randomUUID();
+  
+    try {
+      const response = await axios.post('http://localhost:3001/api/invoice', {
         invoice_id,
         name,
         phone,
         email,
         cost,
-        selectedDate: formattedDate, // Use the formatted date
+        selectedDate: formattedDate,
       }, {
         headers: {
           "Content-Type": "application/json",
         }
-      })
-      .then((response) => response.data)
-      .then(() => {
-        console.log('Form submitted:', invoice_id, name, phone, email, cost, formattedDate);
-        refreshInvoices();
-      })
-      .catch((error) => console.error('Error adding invoice:', error));
-
-    // Close the modal
+      });
+  
+      console.log('Form submitted:', invoice_id, name, phone, email, cost, formattedDate);
+      refreshInvoices();
+      openSnackbar('success', 'Invoice created successfully');
+        
+    } catch (error) {
+      console.error('Error adding invoice:', error);
+      openSnackbar('error', 'Error creating invoice');
+    }
+    
     onClose();
+    
   };
+  
 
   return (
     <Modal open={open} onClose={onClose}>
@@ -92,10 +112,31 @@ const NewInvoiceForm = ({ open, onClose, refreshInvoices }) => {
             onChange={handleCostChange}
             margin="normal"
           />
-          <BasicDatePicker selectedDate={selectedDate} onDateChange={handleDateChange} />
-          <Button variant="contained" color="primary" onClick={handleSubmit}>
+          <BasicDatePicker
+            selectedDate={selectedDate}
+            onDateChange={handleDateChange}
+          />
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={handleSubmit}
+          >
             Create Invoice
           </Button>
+          <Snackbar
+                open={snackbarOpen}
+                autoHideDuration={4000}
+                onClose={closeSnackbar}
+              >
+                <MuiAlert
+                  elevation={6}
+                  variant="filled"
+                  onClose={onClose={closeSnackbar}}
+                  severity={snackbarSeverity}
+                >
+                  {snackbarMessage}
+                </MuiAlert>
+              </Snackbar>
         </CardContent>
       </Card>
     </Modal>
