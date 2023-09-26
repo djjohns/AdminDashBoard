@@ -1,11 +1,14 @@
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi import File, UploadFile
+import json
 from app.invoices.database import (
     fetch_one_invoice,
     fetch_all_invoices,
     create_invoice,
     update_invoice,
     remove_invoice,
+    # bulk_load_invoice_csv,
 )
 from app.invoices.model import Invoice
 
@@ -64,3 +67,11 @@ async def delete_invoice(invoice_id:str):
     if response:
         return "Successfully deleted item."
     raise HTTPException(404, f"Can not delete {invoice_id}. There is no TODO item with this {invoice_id}")
+
+@app.post("/api/upload-file/")
+async def upload_file(file: UploadFile):
+    data = json.loads(file.file.read())
+    return {
+        'filename': file.filename,
+        'content': data
+    }
